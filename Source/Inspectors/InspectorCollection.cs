@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HtmlAgilityPack;
 
@@ -16,6 +17,11 @@ namespace XssShield.Inspectors
         /// <returns>The result</returns>
         public Rejection Inspect(HtmlNode pNode)
         {
+            if (pNode == null)
+            {
+                throw new NullReferenceException("pNode");
+            }
+
             return this.Select(pWhite=>pWhite.Inspect(pNode))
                 .FirstOrDefault(pBlack=>pBlack != null);
         }
