@@ -22,7 +22,7 @@ namespace XssShield
         /// <summary>
         /// True if the signature of a XSS attack was found.
         /// </summary>
-        public bool isDangerous;
+        public bool Dangerous;
 
         /// <summary>
         /// The sanitized HTML.
@@ -35,7 +35,7 @@ namespace XssShield
         public Sanitized()
         {
             Risks = new List<RiskDiscovery>();
-            isDangerous = false;
+            Dangerous = false;
             Clean = new StringBuilder();
         }
 
@@ -46,7 +46,7 @@ namespace XssShield
         public void Add(RiskDiscovery pRisk)
         {
             Risks.Add(pRisk);
-            isDangerous = true;
+            Dangerous = true;
         }
     }
 }
