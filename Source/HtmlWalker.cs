@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
 
@@ -18,12 +19,12 @@ namespace XssShield
         /// <summary>
         /// The original HTML
         /// </summary>
-        private readonly string _document;
+        public readonly string Orginial;
 
         /// <summary>
         /// The HTML node tree.
         /// </summary>
-        private readonly HtmlDocument _html;
+        public readonly HtmlDocument Document;
 
         /// <summary>
         /// Walks the current node and it's children.
@@ -37,15 +38,24 @@ namespace XssShield
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="pDocument">The source HTML</param>
+        /// <param name="pOrginial">The source HTML</param>
         /// <param name="pEncoding">The encoding method</param>
-        public HtmlWalker(string pDocument, Encoding pEncoding)
+        public HtmlWalker(string pOrginial, Encoding pEncoding)
         {
-            _document = pDocument;
+            if (pOrginial == null)
+            {
+                throw new NullReferenceException("pDocument");
+            }
+            if (pEncoding == null)
+            {
+                throw new NullReferenceException("pEncoding");
+            }
+
+            Orginial = pOrginial;
 
             // NOTE: XSS attacks often rely upon readers that perform automatic closing of tags. If
             // you change any of these HtmlDocument settings. All unit tests must be verified again.
-            _html = new HtmlDocument
+            Document = new HtmlDocument
                     {
                         OptionFixNestedTags = true,
                         OptionAutoCloseOnEnd = true,
@@ -53,7 +63,7 @@ namespace XssShield
                         OptionUseIdAttribute = true,
                         OptionWriteEmptyNodes = true
                     };
-            _html.LoadHtml(pDocument);
+            Document.LoadHtml(pOrginial);
         }
 
         /// <summary>
@@ -65,7 +75,7 @@ namespace XssShield
         public Sanitized Execute(Process pCallback)
         {
             Sanitized result = new Sanitized();
-            Walk(_html.DocumentNode, result, pCallback);
+            Walk(Document.DocumentNode, result, pCallback);
 
             return result;
         }
