@@ -43,13 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="iNodeInspector.cs" />
+    <Compile Include="Inspectors\iInspector.cs" />
     <Compile Include="RiskDiscovery.cs" />
-    <Compile Include="iUriValidator.cs" />
-    <Compile Include="iWhiteList.cs" />
+    <Compile Include="WhiteList\iWhiteList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sanitized.cs" />
     <Compile Include="Sanitizer.cs" />
+    <Compile Include="HtmlWalker.cs" />
+    <Compile Include="WhiteList\BlackListed.cs" />
+    <Compile Include="WhiteList\WhiteListCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

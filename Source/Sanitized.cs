@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace XssShield
 {
@@ -8,24 +9,9 @@ namespace XssShield
     public class Sanitized
     {
         /// <summary>
-        /// The original HTML.
-        /// </summary>
-        private readonly string _original;
-
-        /// <summary>
-        /// The sanitized HTML.
-        /// </summary>
-        public string Document { get; set; }
-
-        /// <summary>
         /// The pure text content without HTML.
         /// </summary>
-        public string Clean { get; set; }
-
-        /// <summary>
-        /// True if anything was changed to sanitize the output.
-        /// </summary>
-        public bool Modified { get; set; }
+        public readonly StringBuilder Clean;
 
         /// <summary>
         /// A list of XSS risks discovered in the original document. If
@@ -39,14 +25,18 @@ namespace XssShield
         public bool isDangerous;
 
         /// <summary>
+        /// The sanitized HTML.
+        /// </summary>
+        public string Document { get; set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="pOriginal">The original HTML</param>
-        public Sanitized(string pOriginal)
+        public Sanitized()
         {
-            _original = pOriginal;
             Risks = new List<RiskDiscovery>();
             isDangerous = false;
+            Clean = new StringBuilder();
         }
 
         /// <summary>

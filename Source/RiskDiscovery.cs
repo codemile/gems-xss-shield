@@ -1,4 +1,6 @@
-﻿namespace XssShield
+﻿using HtmlAgilityPack;
+
+namespace XssShield
 {
     /// <summary>
     /// Represents the discovery of something risky in the HTML.
@@ -6,9 +8,9 @@
     public class RiskDiscovery
     {
         /// <summary>
-        /// The description of the risk.
+        /// The column of the discovery, or -1 if not applicable.
         /// </summary>
-        public readonly string Message;
+        public readonly int Column;
 
         /// <summary>
         /// The line of the discovery, or -1 if not applicable.
@@ -16,9 +18,9 @@
         public readonly int Line;
 
         /// <summary>
-        /// The column of the discovery, or -1 if not applicable.
+        /// The description of the risk.
         /// </summary>
-        public readonly int Column;
+        public readonly string Message;
 
         /// <summary>
         /// Constructor
@@ -40,7 +42,17 @@
         public RiskDiscovery(string pMessage)
             : this(-1, -1, pMessage)
         {
-            
+        }
+
+        /// <summary>
+        /// Creates an object based upon a HtmlNode object.
+        /// </summary>
+        /// <param name="pNode">The node object.</param>
+        /// <param name="pMessage">The message.</param>
+        /// <returns>The new instance.</returns>
+        public static RiskDiscovery Create(HtmlNode pNode, string pMessage)
+        {
+            return new RiskDiscovery(pNode.Line, pNode.LinePosition, pMessage);
         }
     }
 }
