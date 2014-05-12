@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using HtmlAgilityPack;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using XssShield;
 
 namespace XssShieldTests
 {
@@ -6,21 +8,31 @@ namespace XssShieldTests
     public class RiskDiscoveryTests
     {
         [TestMethod]
-        public void CreateTest()
+        public void Constructor_1()
         {
-            Assert.Fail();
+            RiskDiscovery risk = new RiskDiscovery("test");
+            Assert.AreEqual("test",risk.Message);
+            Assert.AreEqual(-1, risk.Line);
+            Assert.AreEqual(-1, risk.Column);
         }
 
         [TestMethod]
-        public void RiskDiscoveryTest()
+        public void Constructor_2()
         {
-            Assert.Fail();
+            RiskDiscovery risk = new RiskDiscovery(10,100,"test");
+            Assert.AreEqual("test", risk.Message);
+            Assert.AreEqual(10, risk.Line);
+            Assert.AreEqual(100, risk.Column);
         }
 
         [TestMethod]
-        public void RiskDiscoveryTest1()
+        public void Create_1()
         {
-            Assert.Fail();
+            RiskDiscovery risk = RiskDiscovery.Create(HtmlNode.CreateNode("<p>This <span>is a</span> test.</p>").ChildNodes.FindFirst("span"), "test");
+            Assert.IsNotNull(risk);
+            Assert.AreEqual("test",risk.Message);
+            Assert.AreEqual(1, risk.Line);
+            Assert.AreEqual(9, risk.Column);
         }
     }
 }
