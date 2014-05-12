@@ -21,10 +21,10 @@
         /// </summary>
         /// <param name="pRemoveChildren">Remove the children</param>
         /// <param name="pReason">The reason for the risk.</param>
-        public Rejection(bool pRemoveChildren, RiskDiscovery pReason)
+        public Rejection(bool pRemoveChildren, RiskDiscovery pReason = null)
         {
-            Reason = pReason;
             RemoveChildren = pRemoveChildren;
+            Reason = pReason;
         }
     }
 }
