@@ -1,9 +1,9 @@
 ﻿namespace XssShield.Inspectors
 {
     /// <summary>
-    /// Holds the result of inspecting a node.
+    /// Holds the result of rejecting a node.
     /// </summary>
-    public class InspectResult
+    public class Rejection
     {
         /// <summary>
         /// If the removal is because of a risk, then this
@@ -21,19 +21,10 @@
         /// </summary>
         /// <param name="pRemoveChildren">Remove the children</param>
         /// <param name="pReason">The reason for the risk.</param>
-        public InspectResult(bool pRemoveChildren, RiskDiscovery pReason)
+        public Rejection(bool pRemoveChildren, RiskDiscovery pReason)
         {
             Reason = pReason;
             RemoveChildren = pRemoveChildren;
-        }
-
-        /// <summary>
-        /// Creates a rejection that isn't because of a XSS risk.
-        /// </summary>
-        /// <param name="pRemoveChildren">True to remove the children</param>
-        public InspectResult(bool pRemoveChildren)
-            : this(pRemoveChildren, null)
-        {
         }
     }
 }

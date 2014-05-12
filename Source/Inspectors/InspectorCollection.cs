@@ -14,7 +14,7 @@ namespace XssShield.Inspectors
         /// </summary>
         /// <param name="pNode">The node to check.</param>
         /// <returns>The result</returns>
-        public BlackListed Inspect(HtmlNode pNode)
+        public InspectResult Inspect(HtmlNode pNode)
         {
             return this.Select(pWhite=>pWhite.Inspect(pNode))
                 .FirstOrDefault(pBlack=>pBlack != null);

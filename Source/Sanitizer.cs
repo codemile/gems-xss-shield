@@ -96,7 +96,7 @@ namespace XssShield
 
             if (pNode.NodeType == HtmlNodeType.Element)
             {
-                InspectResult negative = _inspector.Inspect(pNode);
+                Rejection negative = _inspector.Inspect(pNode);
                 if (negative == null)
                 {
                     return;

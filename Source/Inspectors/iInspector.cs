@@ -12,6 +12,6 @@ namespace XssShield.Inspectors
         /// </summary>
         /// <param name="pNode">The node to inspect.</param>
         /// <returns>A new instance of BlackListed, or Null.</returns>
-        InspectResult Inspect(HtmlNode pNode);
+        Rejection Inspect(HtmlNode pNode);
     }
 }
