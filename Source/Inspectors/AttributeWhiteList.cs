@@ -5,7 +5,8 @@ using HtmlAgilityPack;
 namespace XssShield.Inspectors
 {
     /// <summary>
-    /// Filters the attributes of nodes to only allow the ones in the white list.
+    /// Filters the attributes of nodes to only allow the ones in the white list. This
+    /// inspector never rejects any nodes.
     /// </summary>
     public class AttributeWhiteList : AttributeInspector, iInspector
     {
@@ -48,31 +49,59 @@ namespace XssShield.Inspectors
         /// <returns>A new instance of BlackListed, or Null.</returns>
         public Rejection Inspect(HtmlNode pNode)
         {
+            if (InspectNode(pNode))
+            {
+                FilterAttributes(pNode);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Filters the attributes of a node.
+        /// </summary>
+        public HtmlNode FilterAttributes(HtmlNode pNode)
+        {
             string name = pNode.Name.ToLower().Trim();
 
-            if (pNode.NodeType != HtmlNodeType.Element
-                || !pNode.HasAttributes)
-            {
-                return null;
-            }
+            List<HtmlAttribute> copy = pNode.Attributes.ToList();
+            pNode.Attributes.RemoveAll();
 
             if (!Attributes.ContainsKey(name))
             {
-                pNode.Attributes.RemoveAll();
-                return null;
+                return pNode;
             }
 
-            List<HtmlAttribute> allowedAttr =
-                pNode.Attributes
-                    .Where(pAttr=>Attributes[name].Contains(pAttr.Name.ToLower()))
-                    .GroupBy(pAttr=>pAttr.Name)
-                    .Select(pGroup=>pGroup.First())
-                    .ToList();
+            List<HtmlAttribute> allowedAttr = copy
+                .Where(pAttr=>Attributes[name].Contains(pAttr.Name.ToLower().Trim()))
+                .GroupBy(pAttr=>pAttr.Name)
+                .Select(pGroup=>pGroup.First())
+                .ToList();
+            allowedAttr.ForEach(pAttr => pNode.Attributes.Add(pAttr));
+
+            return pNode;
+        }
+
+        /// <summary>
+        /// Should the node be inspected.
+        /// </summary>
+        /// <param name="pNode">The node to check</param>
+        /// <returns>True to inspect the attributes.</returns>
+        public bool InspectNode(HtmlNode pNode)
+        {
+            if (pNode.NodeType != HtmlNodeType.Element
+                || !pNode.HasAttributes)
+            {
+                return false;
+            }
+
+            string name = pNode.Name.ToLower().Trim();
+            if (Attributes.ContainsKey(name))
+            {
+                return true;
+            }
 
             pNode.Attributes.RemoveAll();
-            allowedAttr.ForEach(pAttr=>pNode.Attributes.Add(pAttr));
-
-            return null;
+            return false;
         }
     }
 }
