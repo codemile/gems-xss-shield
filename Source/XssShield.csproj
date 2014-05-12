@@ -7,8 +7,8 @@
     <ProjectGuid>{95E82159-90E5-4A5B-A8CA-5C02DB0BFD4A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>gems_html</RootNamespace>
-    <AssemblyName>gems-html</AssemblyName>
+    <RootNamespace>XssShield</RootNamespace>
+    <AssemblyName>XssShield</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
