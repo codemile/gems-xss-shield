@@ -1,7 +1,7 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using HtmlAgilityPack;
 using XssShield.Inspectors;
-using XssShield.WhiteList;
 
 namespace XssShield
 {
@@ -13,14 +13,9 @@ namespace XssShield
         private readonly Encoding _encoding;
 
         /// <summary>
-        /// Handles node inspections.
-        /// </summary>
-        private readonly iInspector _inspector;
-
-        /// <summary>
         /// Defines a list of HTML tags that are allowed.
         /// </summary>
-        private readonly iWhiteList _whiteList;
+        private readonly iInspector _inspector;
 
         /// <summary>
         /// Sanitizes the HtmlDocument.
@@ -37,12 +32,10 @@ namespace XssShield
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="pWhiteList">White list provider.</param>
-        /// <param name="pInspector">Handles inspecting a node for risk signatures.</param>
+        /// <param name="pInspector">White list provider.</param>
         /// <param name="pEncoding">The encoding used internally.</param>
-        public Sanitizer(iWhiteList pWhiteList, iInspector pInspector, Encoding pEncoding)
+        public Sanitizer(iInspector pInspector, Encoding pEncoding)
         {
-            _whiteList = pWhiteList;
             _inspector = pInspector;
             _encoding = pEncoding;
         }
@@ -50,21 +43,20 @@ namespace XssShield
         /// <summary>
         /// Constructor
         /// </summary>
-        public Sanitizer(iWhiteList pWhiteList, iInspector pInspector)
-            : this(pWhiteList, pInspector, Encoding.UTF8)
+        public Sanitizer(iInspector pInspector)
+            : this(pInspector, Encoding.UTF8)
         {
         }
 
         /// <summary>
         /// Performs sanitization of a HTML document.
         /// </summary>
-        /// <param name="pWhiteList">The white list to use.</param>
-        /// <param name="pInspector">The node inspector to use.</param>
+        /// <param name="pInspector">The white list to use.</param>
         /// <param name="pDocument">The document to inspect.</param>
         /// <returns>The results.</returns>
-        public static Sanitized Clean(iWhiteList pWhiteList, iInspector pInspector, string pDocument)
+        public static Sanitized Clean(iInspector pInspector, string pDocument)
         {
-            Sanitizer sanitizer = new Sanitizer(pWhiteList, pInspector);
+            Sanitizer sanitizer = new Sanitizer(pInspector);
             return sanitizer.Clean(pDocument);
         }
 
@@ -72,15 +64,14 @@ namespace XssShield
         /// Performs sanitization of an HTML document twice. Assumes that any differences between the
         /// first pass and second pass are indicators of filter evasion.
         /// </summary>
-        /// <param name="pWhiteList">The white list to use.</param>
-        /// <param name="pInspector">The node inspector to use.</param>
+        /// <param name="pInspector">The white list to use.</param>
         /// <param name="pDocument">The document to inspect.</param>
         /// <returns>The results.</returns>
-        public static Sanitized DoublePass(iWhiteList pWhiteList, iInspector pInspector, string pDocument)
+        public static Sanitized DoublePass(iInspector pInspector, string pDocument)
         {
             // perform a two pass sanitization test
-            Sanitized pass1 = Clean(pWhiteList, pInspector, pDocument);
-            Sanitized pass2 = Clean(pWhiteList, pInspector, pass1.Document);
+            Sanitized pass1 = Clean(pInspector, pDocument);
+            Sanitized pass2 = Clean(pInspector, pass1.Document);
 
             if (pass1.Document.Equals(pass2.Document) == false)
             {
@@ -98,26 +89,25 @@ namespace XssShield
         /// <returns>True if modified</returns>
         public void Process(Sanitized pResult, HtmlNode pNode)
         {
-            _inspector.getRicks(pNode).ForEach(pResult.Add);
-
             if (pNode.NodeType == HtmlNodeType.Text)
             {
+                pResult.Clean.Append(pNode.InnerText);
             }
 
             if (pNode.NodeType == HtmlNodeType.Element)
             {
-                BlackListed black = _whiteList.isBlackListed(pNode);
-                if (black == null)
+                InspectResult negative = _inspector.Inspect(pNode);
+                if (negative == null)
                 {
                     return;
                 }
 
-                if (black.Reason != null)
+                if (negative.Reason != null)
                 {
-                    pResult.Add(black.Reason);
+                    pResult.Add(negative.Reason);
                 }
 
-                if (!black.RemoveChildren)
+                if (!negative.RemoveChildren)
                 {
                     pNode.ParentNode.AppendChildren(pNode.ChildNodes);
                 }

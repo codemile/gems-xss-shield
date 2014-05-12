@@ -1,9 +1,9 @@
-﻿namespace XssShield.WhiteList
+﻿namespace XssShield.Inspectors
 {
     /// <summary>
-    /// Holds the result of a white list check.
+    /// Holds the result of inspecting a node.
     /// </summary>
-    public class BlackListed
+    public class InspectResult
     {
         /// <summary>
         /// If the removal is because of a risk, then this
@@ -21,7 +21,7 @@
         /// </summary>
         /// <param name="pRemoveChildren">Remove the children</param>
         /// <param name="pReason">The reason for the risk.</param>
-        public BlackListed(bool pRemoveChildren, RiskDiscovery pReason)
+        public InspectResult(bool pRemoveChildren, RiskDiscovery pReason)
         {
             Reason = pReason;
             RemoveChildren = pRemoveChildren;
@@ -31,7 +31,7 @@
         /// Creates a rejection that isn't because of a XSS risk.
         /// </summary>
         /// <param name="pRemoveChildren">True to remove the children</param>
-        public BlackListed(bool pRemoveChildren)
+        public InspectResult(bool pRemoveChildren)
             : this(pRemoveChildren, null)
         {
         }

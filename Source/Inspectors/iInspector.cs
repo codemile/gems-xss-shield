@@ -1,10 +1,17 @@
-﻿using System.Collections.Generic;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 
 namespace XssShield.Inspectors
 {
+    /// <summary>
+    /// Objects that test for rejection should implement this interface.
+    /// </summary>
     public interface iInspector
     {
-        List<RiskDiscovery> getRicks(HtmlNode pNode);
+        /// <summary>
+        /// If a node should be reject. Create a BlackListed object and return it.
+        /// </summary>
+        /// <param name="pNode">The node to inspect.</param>
+        /// <returns>A new instance of BlackListed, or Null.</returns>
+        InspectResult Inspect(HtmlNode pNode);
     }
 }

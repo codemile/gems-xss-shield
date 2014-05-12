@@ -2,21 +2,21 @@
 using System.Linq;
 using HtmlAgilityPack;
 
-namespace XssShield.WhiteList
+namespace XssShield.Inspectors
 {
     /// <summary>
     /// A collection of white list elements.
     /// </summary>
-    public class WhiteListCollection : List<iWhiteList>, iWhiteList
+    public class InspectorCollection : List<iInspector>, iInspector
     {
         /// <summary>
         /// Checks the list to see if any are rejected.
         /// </summary>
         /// <param name="pNode">The node to check.</param>
         /// <returns>The result</returns>
-        public BlackListed isBlackListed(HtmlNode pNode)
+        public BlackListed Inspect(HtmlNode pNode)
         {
-            return this.Select(pWhite=>pWhite.isBlackListed(pNode))
+            return this.Select(pWhite=>pWhite.Inspect(pNode))
                 .FirstOrDefault(pBlack=>pBlack != null);
         }
     }
