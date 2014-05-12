@@ -2,3 +2,5 @@
 /Tests/obj/Release
 /Source/obj/Debug
 /Source/obj/Release
+/Source/bin/Debug
+/Tests/bin/Debug

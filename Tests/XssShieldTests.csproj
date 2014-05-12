@@ -51,7 +51,25 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="HtmlWalkerTests.cs" />
+    <Compile Include="Inspectors\AttributeInspectorTests.cs" />
+    <Compile Include="Inspectors\AttributeListTests.cs" />
+    <Compile Include="Inspectors\AttributeWhiteListTests.cs" />
+    <Compile Include="Inspectors\InspectorCollectionTests.cs" />
+    <Compile Include="Inspectors\RejectionTests.cs" />
+    <Compile Include="Inspectors\UrlRewriterTests.cs" />
+    <Compile Include="Inspectors\WhiteListTests.cs" />
+    <Compile Include="Mock\MockAttributeInspector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RiskDiscoveryTests.cs" />
+    <Compile Include="SanitizedTests.cs" />
+    <Compile Include="SanitizerTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Source\XssShield.csproj">
+      <Project>{95e82159-90e5-4a5b-a8ca-5c02db0bfd4a}</Project>
+      <Name>XssShield</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

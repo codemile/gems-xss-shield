@@ -10,33 +10,33 @@ namespace XssShield.Inspectors
     public class AttributeWhiteList : AttributeInspector, iInspector
     {
         public static readonly
-            Dictionary<string, IEnumerable<string>> Minimum =
-                new Dictionary<string, IEnumerable<string>>
+            AttributeList Minimum =
+                new AttributeList
                 {
-                    {"p", new[] {"align"}},
-                    {"div", new[] {"align"}},
-                    {"font", new[] {"color", "face"}},
-                    {"a", new[] {"href", "title"}},
+                    {"p", new List<string> {"align"}},
+                    {"div", new List<string> {"align"}},
+                    {"font", new List<string> {"color", "face"}},
+                    {"a", new List<string> {"href", "title"}},
                     {
-                        "img", new[] {"src", "height", "width", "alt", "title"}
+                        "img", new List<string> {"src", "height", "width", "alt", "title"}
                     },
-                    {"q", new[] {"cite"}}
+                    {"q", new List<string> {"cite"}}
                 };
 
         public static readonly
-            Dictionary<string, IEnumerable<string>> Tables =
-                new Dictionary<string, IEnumerable<string>>
+            AttributeList Tables =
+                new AttributeList
                 {
-                    {"th", new[] {"colspan", "rowspace", "scope"}},
-                    {"td", new[] {"colspan", "rowspace"}},
-                    {"colgroup", new[] {"span"}}
+                    {"th", new List<string> {"colspan", "rowspace", "scope"}},
+                    {"td", new List<string> {"colspan", "rowspace"}},
+                    {"colgroup", new List<string> {"span"}}
                 };
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="pWhiteList"></param>
-        public AttributeWhiteList(IEnumerable<KeyValuePair<string, IEnumerable<string>>> pWhiteList)
+        public AttributeWhiteList(AttributeList pWhiteList)
             : base(pWhiteList)
         {
         }
@@ -74,6 +74,5 @@ namespace XssShield.Inspectors
 
             return null;
         }
-
     }
 }

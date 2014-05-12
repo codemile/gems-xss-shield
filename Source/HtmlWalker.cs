@@ -10,6 +10,12 @@ namespace XssShield
     public class HtmlWalker
     {
         /// <summary>
+        /// The callback function for processing a node.
+        /// </summary>
+        /// <returns>True if the node was modified.</returns>
+        public delegate void Process(Sanitized pResult, HtmlNode pNode);
+
+        /// <summary>
         /// The original HTML
         /// </summary>
         private readonly string _document;
@@ -20,10 +26,13 @@ namespace XssShield
         private readonly HtmlDocument _html;
 
         /// <summary>
-        /// The callback function for processing a node.
+        /// Walks the current node and it's children.
         /// </summary>
-        /// <returns>True if the node was modified.</returns>
-        public delegate void Process(Sanitized pResult, HtmlNode pNode);
+        private static void Walk(HtmlNode pNode, Sanitized pResult, Process pCallback)
+        {
+            pCallback(pResult, pNode);
+            pNode.ChildNodes.ToList().ForEach(pChild=>Walk(pChild, pResult, pCallback));
+        }
 
         /// <summary>
         /// Constructor
@@ -37,23 +46,14 @@ namespace XssShield
             // NOTE: XSS attacks often rely upon readers that perform automatic closing of tags. If
             // you change any of these HtmlDocument settings. All unit tests must be verified again.
             _html = new HtmlDocument
-                          {
-                              OptionFixNestedTags = true, 
-                              OptionAutoCloseOnEnd = true, 
-                              OptionDefaultStreamEncoding = pEncoding, 
-                              OptionUseIdAttribute = true, 
-                              OptionWriteEmptyNodes = true
-                          };
+                    {
+                        OptionFixNestedTags = true,
+                        OptionAutoCloseOnEnd = true,
+                        OptionDefaultStreamEncoding = pEncoding,
+                        OptionUseIdAttribute = true,
+                        OptionWriteEmptyNodes = true
+                    };
             _html.LoadHtml(pDocument);
-        }
-
-        /// <summary>
-        /// Walks the current node and it's children.
-        /// </summary>
-        private static void Walk(HtmlNode pNode, Sanitized pResult, Process pCallback)
-        {
-            pCallback(pResult, pNode);
-            pNode.ChildNodes.ToList().ForEach(pChild => Walk(pChild, pResult, pCallback));
         }
 
         /// <summary>

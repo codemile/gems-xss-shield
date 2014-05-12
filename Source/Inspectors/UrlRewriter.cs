@@ -21,8 +21,7 @@ namespace XssShield.Inspectors
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="pWhiteList"></param>
-        public UrlRewriter(IEnumerable<KeyValuePair<string, IEnumerable<string>>> pWhiteList)
+        public UrlRewriter(AttributeList pWhiteList)
             : base(pWhiteList)
         {
         }

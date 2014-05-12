@@ -36,20 +36,21 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Inspectors\AttributeInspector.cs" />
+    <Compile Include="Inspectors\AttributeList.cs" />
+    <Compile Include="Inspectors\UrlRewriter.cs" />
+    <Compile Include="Inspectors\AttributeWhiteList.cs" />
+    <Compile Include="Inspectors\WhiteList.cs" />
     <Compile Include="RiskDiscovery.cs" />
     <Compile Include="Inspectors\iInspector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sanitized.cs" />
     <Compile Include="Sanitizer.cs" />
     <Compile Include="HtmlWalker.cs" />
-    <Compile Include="Inspectors\BlackListed.cs" />
+    <Compile Include="Inspectors\Rejection.cs" />
     <Compile Include="Inspectors\InspectorCollection.cs" />
   </ItemGroup>
   <ItemGroup>
