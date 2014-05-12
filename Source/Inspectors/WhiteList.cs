@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HtmlAgilityPack;
 
@@ -21,7 +22,7 @@ namespace XssShield.Inspectors
         /// A list of tags whose children can be kept if they are
         /// queued to be removed.
         /// </summary>
-        public static readonly string[] ChildFriendly =
+        public static readonly string[] ChildFriendlyTags =
         {
             "body", "html", "div"
         };
@@ -44,20 +45,25 @@ namespace XssShield.Inspectors
         /// <summary>
         /// A list of elements that are child friendly.
         /// </summary>
-        private readonly IEnumerable<string> _childFriendly;
+        public readonly List<string> ChildFriendly;
 
         /// <summary>
         /// The list to check
         /// </summary>
-        private readonly List<string> _list;
+        public readonly List<string> List;
 
         /// <summary>
         /// Removes empty and duplicated entries in the list.
         /// </summary>
         /// <param name="pList">The list to clean.</param>
         /// <returns>A new list.</returns>
-        private static List<string> CleanList(IEnumerable<string> pList)
+        public static List<string> CleanList(IEnumerable<string> pList)
         {
+            if (pList == null)
+            {
+                throw new NullReferenceException("pList");
+            }
+
             return (from item in pList
                     let str = item.ToLower().Trim()
                     where str.Length > 0
@@ -73,8 +79,18 @@ namespace XssShield.Inspectors
         /// <param name="pChildFriendly">A white list of elements, when removed their children are kept.</param>
         public WhiteList(IEnumerable<string> pList, IEnumerable<string> pChildFriendly)
         {
-            _list = CleanList(pList);
-            _childFriendly = CleanList(pChildFriendly);
+            if (pList == null)
+            {
+                throw new NullReferenceException("pList");
+            }
+
+            if (pChildFriendly == null)
+            {
+                throw new NullReferenceException("pChildFriendly");
+            }
+
+            List = CleanList(pList);
+            ChildFriendly = CleanList(pChildFriendly);
         }
 
         /// <summary>
@@ -84,10 +100,20 @@ namespace XssShield.Inspectors
         /// <returns>A new instance of BlackListed, or Null.</returns>
         public Rejection Inspect(HtmlNode pNode)
         {
+            if (pNode == null)
+            {
+                throw new NullReferenceException("pNode");
+            }
+
+            if (pNode.NodeType != HtmlNodeType.Element)
+            {
+                return null;
+            }
+
             string name = pNode.Name.ToLower().Trim();
-            return _list.Contains(name)
+            return List.Contains(name)
                 ? null
-                : new Rejection(_childFriendly.Contains(name),
+                : new Rejection(!ChildFriendly.Contains(name),
                     new RiskDiscovery(pNode.Line, pNode.LinePosition,
                         string.Format("<{0}> is not in white list.", pNode.Name)));
         }
