@@ -1,4 +1,4 @@
-﻿namespace gems_html
+﻿namespace XssShield
 {
     /// <summary>
     /// Represents the discovery of something risky in the HTML.

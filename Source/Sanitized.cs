@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace gems_html
+namespace XssShield
 {
     /// <summary>
     /// Holds the result of sanitizing a HTML document.

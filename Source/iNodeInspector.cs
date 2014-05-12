@@ -1,4 +1,4 @@
-﻿namespace gems_html
+﻿namespace XssShield
 {
     public interface iNodeInspector
     {

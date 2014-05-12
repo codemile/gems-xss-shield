@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using HtmlAgilityPack;
 
-namespace gems_html
+namespace XssShield
 {
     public class Sanitizer
     {
