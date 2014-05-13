@@ -13,7 +13,6 @@ namespace XssShieldTests
             Assert.IsNotNull(san.Clean);
             Assert.IsNotNull(san.Risks);
             Assert.AreEqual(0,san.Risks.Count);
-            Assert.IsFalse(san.Dangerous);
             Assert.IsNull(san.Document);
         }
 
@@ -23,7 +22,6 @@ namespace XssShieldTests
             Sanitized san = new Sanitized();
             san.Add(new RiskDiscovery(0,0,"test"));
             Assert.AreEqual(1,san.Risks.Count);
-            Assert.IsTrue(san.Dangerous);
         }
     }
 }

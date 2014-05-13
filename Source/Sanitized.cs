@@ -20,11 +20,6 @@ namespace XssShield
         public readonly List<RiskDiscovery> Risks;
 
         /// <summary>
-        /// True if the signature of a XSS attack was found.
-        /// </summary>
-        public bool Dangerous;
-
-        /// <summary>
         /// The sanitized HTML.
         /// </summary>
         public string Document { get; set; }
@@ -35,7 +30,6 @@ namespace XssShield
         public Sanitized()
         {
             Risks = new List<RiskDiscovery>();
-            Dangerous = false;
             Clean = new StringBuilder();
         }
 
@@ -46,7 +40,6 @@ namespace XssShield
         public void Add(RiskDiscovery pRisk)
         {
             Risks.Add(pRisk);
-            Dangerous = true;
         }
     }
 }

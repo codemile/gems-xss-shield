@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using XssShield;
+using XssShieldTests.Mock;
 
 namespace XssShieldTests
 {
@@ -6,33 +9,36 @@ namespace XssShieldTests
     public class SanitizerTests
     {
         [TestMethod]
-        public void CleanTest()
+        [ExpectedException(typeof (NullReferenceException))]
+        public void Clean_1()
         {
-            Assert.Fail();
+            Sanitizer.Clean(null, null);
         }
 
         [TestMethod]
-        public void DoublePassTest()
+        [ExpectedException(typeof (NullReferenceException))]
+        public void Clean_2()
         {
-            Assert.Fail();
+            MockInspector mock = new MockInspector();
+            Sanitized sanitized = Sanitizer.Clean(mock, null);
         }
 
         [TestMethod]
-        public void ProcessTest()
+        [ExpectedException(typeof (NullReferenceException))]
+        public void Clean_3()
         {
-            Assert.Fail();
+            Sanitized sanitized = Sanitizer.Clean(null, "");
         }
 
         [TestMethod]
-        public void SanitizerTest()
+        public void Clean_4()
         {
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void SanitizerTest1()
-        {
-            Assert.Fail();
+            MockInspector mock = new MockInspector();
+            Sanitized sanitized = Sanitizer.Clean(mock, "<p>Hello world.</p>");
+            Assert.IsNotNull(sanitized);
+            Assert.AreEqual(1,mock.Count);
+            Assert.AreEqual("<p>Hello world.</p>",sanitized.Document);
+            Assert.AreEqual("Hello world.",sanitized.Clean);
         }
     }
 }
