@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using HtmlAgilityPack;
 using XssShield.Inspectors;
@@ -18,14 +20,47 @@ namespace XssShield
         private readonly iInspector _inspector;
 
         /// <summary>
+        /// A list of nodes to remove from the DOM.
+        /// </summary>
+        private readonly List<Rejection> _rejections;
+
+        /// <summary>
         /// Sanitizes the HtmlDocument.
         /// </summary>
         /// <param name="pDocument">The document to modify.</param>
         /// <returns>True if any changes were made, or False if none.</returns>
         private Sanitized Clean(string pDocument)
         {
+            _rejections.Clear();
+
             HtmlWalker walker = new HtmlWalker(pDocument, _encoding);
             Sanitized result = walker.Execute(Process);
+
+            foreach (Rejection rejected in _rejections)
+            {
+                HtmlNode node = rejected.Node;
+                HtmlNode parent = node.ParentNode;
+
+                // can not remove the root node of the document.
+                if (parent == null)
+                {
+                    continue;
+                }
+
+                if (!rejected.RemoveChildren)
+                {
+                    parent.AppendChildren(node.ChildNodes);
+                    node.ChildNodes.Clear();
+                }
+                parent.RemoveChild(node);
+            }
+
+            using (StringWriter writer = new StringWriter())
+            {
+                walker.Document.Save(writer);
+                result.Document = writer.ToString();
+            }
+
             return result;
         }
 
@@ -37,33 +72,27 @@ namespace XssShield
         /// <returns>True if modified</returns>
         private void Process(Sanitized pResult, HtmlNode pNode)
         {
-            if (pNode.NodeType == HtmlNodeType.Text)
+            switch (pNode.NodeType)
             {
-                pResult.Clean.Append(pNode.InnerText);
+                case HtmlNodeType.Text:
+                    pResult.Clean.Append(pNode.InnerText);
+                    break;
+                case HtmlNodeType.Element:
+                    Rejection result = _inspector.Inspect(pNode);
+                    if (result == null)
+                    {
+                        break;
+                    }
+                    if (result.Reason != null)
+                    {
+                        pResult.Add(result.Reason);
+                    }
+                    _rejections.Add(result);
+                    break;
+                default:
+                    _rejections.Add(new Rejection(true, pNode));
+                    break;
             }
-
-            if (pNode.NodeType == HtmlNodeType.Element)
-            {
-                Rejection negative = _inspector.Inspect(pNode);
-                if (negative == null)
-                {
-                    return;
-                }
-
-                if (negative.Reason != null)
-                {
-                    pResult.Add(negative.Reason);
-                }
-
-                if (!negative.RemoveChildren)
-                {
-                    pNode.ParentNode.AppendChildren(pNode.ChildNodes);
-                }
-            }
-
-            // by default, any unhandled nodes are removed.
-            // TODO: The root node can not remove itself!
-            pNode.ParentNode.RemoveChild(pNode);
         }
 
         /// <summary>
@@ -75,6 +104,7 @@ namespace XssShield
         {
             _inspector = pInspector;
             _encoding = pEncoding;
+            _rejections = new List<Rejection>();
         }
 
         /// <summary>

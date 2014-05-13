@@ -26,7 +26,10 @@ namespace XssShieldTests.Mock
         {
             Assert.IsNotNull(pNode);
             Count++;
-            return _reject;
+
+            return _reject != null 
+                ? new Rejection(_reject.RemoveChildren,pNode,_reject.Reason) 
+                : null;
         }
     }
 }

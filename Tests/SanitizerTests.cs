@@ -38,7 +38,7 @@ namespace XssShieldTests
             Assert.IsNotNull(sanitized);
             Assert.AreEqual(1,mock.Count);
             Assert.AreEqual("<p>Hello world.</p>",sanitized.Document);
-            Assert.AreEqual("Hello world.",sanitized.Clean);
+            Assert.AreEqual("Hello world.",sanitized.Clean.ToString());
         }
     }
 }

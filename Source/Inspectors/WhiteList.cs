@@ -114,6 +114,7 @@ namespace XssShield.Inspectors
             return List.Contains(name)
                 ? null
                 : new Rejection(!ChildFriendly.Contains(name),
+                    pNode,
                     new RiskDiscovery(pNode.Line, pNode.LinePosition,
                         string.Format("<{0}> is not in white list.", pNode.Name)));
         }

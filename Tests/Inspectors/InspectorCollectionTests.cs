@@ -32,20 +32,21 @@ namespace XssShieldTests.Inspectors
         [TestMethod]
         public void Inspect_3()
         {
-            MockInspector mock = new MockInspector(new Rejection(true,new RiskDiscovery("test")));
+            MockInspector mock = new MockInspector(new Rejection(true, HtmlNode.CreateNode("<span>"), new RiskDiscovery("test")));
             InspectorCollection list = new InspectorCollection { mock };
 
             Rejection reject = list.Inspect(HtmlNode.CreateNode("<br>"));
             Assert.IsNotNull(reject);
             Assert.AreEqual(1, mock.Count);
             Assert.AreEqual("test",reject.Reason.Message);
+            Assert.AreEqual("br",reject.Node.Name);
         }
 
         [TestMethod]
         public void Inspect_4()
         {
             MockInspector mock1 = new MockInspector();
-            MockInspector mock2 = new MockInspector(new Rejection(true, new RiskDiscovery("test")));
+            MockInspector mock2 = new MockInspector(new Rejection(true, HtmlNode.CreateNode("<span>"), new RiskDiscovery("test")));
 
             InspectorCollection list = new InspectorCollection { mock1, mock2 };
 
@@ -54,13 +55,14 @@ namespace XssShieldTests.Inspectors
             Assert.AreEqual(1, mock1.Count);
             Assert.AreEqual(1, mock2.Count);
             Assert.AreEqual("test", reject.Reason.Message);
+            Assert.AreEqual("br", reject.Node.Name);
         }
 
         [TestMethod]
         public void Inspect_5()
         {
             MockInspector mock1 = new MockInspector();
-            MockInspector mock2 = new MockInspector(new Rejection(true, new RiskDiscovery("test")));
+            MockInspector mock2 = new MockInspector(new Rejection(true, HtmlNode.CreateNode("<span>"), new RiskDiscovery("test")));
 
             InspectorCollection list = new InspectorCollection { mock2, mock1 };
 
@@ -69,6 +71,7 @@ namespace XssShieldTests.Inspectors
             Assert.AreEqual(1, mock2.Count);
             Assert.AreEqual(0, mock1.Count);
             Assert.AreEqual("test", reject.Reason.Message);
+            Assert.AreEqual("br", reject.Node.Name);
         }
 
         [TestMethod]
@@ -93,7 +96,7 @@ namespace XssShieldTests.Inspectors
         {
             MockInspector mock1 = new MockInspector();
             MockInspector mock2 = new MockInspector();
-            MockInspector mock3 = new MockInspector(new Rejection(true, new RiskDiscovery("test")));
+            MockInspector mock3 = new MockInspector(new Rejection(true, HtmlNode.CreateNode("<span>"), new RiskDiscovery("test")));
             MockInspector mock4 = new MockInspector();
             InspectorCollection list = new InspectorCollection { mock1, mock2, mock3, mock4 };
 
@@ -104,6 +107,7 @@ namespace XssShieldTests.Inspectors
             Assert.AreEqual(1, mock3.Count);
             Assert.AreEqual(0, mock4.Count);
             Assert.AreEqual("test", reject.Reason.Message);
+            Assert.AreEqual("br", reject.Node.Name);
         }
 
     }
