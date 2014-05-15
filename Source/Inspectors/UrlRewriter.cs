@@ -61,7 +61,7 @@ namespace XssShield.Inspectors
                 string url = CleanURL(pNode.Attributes[attrName].Value, _allowIPAddresses);
                 if (url == null)
                 {
-                    return new Rejection(true, pNode, new RiskDiscovery(pNode.Line, pNode.LinePosition, "Malformed URL"));
+                    return new Rejection(true, pNode, new RiskDiscovery(pNode.Line, pNode.LinePosition, "UrlRewriter: Malformed URL"));
                 }
                 pNode.Attributes[attrName].Value = url;
             }

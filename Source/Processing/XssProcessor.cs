@@ -84,7 +84,7 @@ namespace XssShield.Processing
             pStr = Regex.Replace(pStr, @"[\n]+", "\n");
             pStr = pStr.Replace(" \n", "");
             pStr = string.Join("\n",pStr.Split('\n').Select(pLine=>pLine.Trim()));
-            return pStr;
+            return pStr.Trim();
         }
 
         /// <summary>

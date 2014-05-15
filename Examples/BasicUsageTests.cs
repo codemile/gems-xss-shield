@@ -22,11 +22,19 @@ namespace Examples
             Console.WriteLine(@"Clean");
             Console.WriteLine(@"*******************************************");
             Console.WriteLine(sanitized.Clean);
+            Console.WriteLine();
 
             Console.WriteLine(@"*******************************************");
             Console.WriteLine(@"HTML");
             Console.WriteLine(@"*******************************************");
             Console.WriteLine(sanitized.Document);
+            Console.WriteLine();
+
+            Console.WriteLine(@"*******************************************");
+            Console.WriteLine(@"Original");
+            Console.WriteLine(@"*******************************************");
+            Console.WriteLine(html);
+            Console.WriteLine();
         }
     }
 }

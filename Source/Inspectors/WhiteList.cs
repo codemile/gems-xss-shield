@@ -31,6 +31,7 @@ namespace XssShield.Inspectors
         public static readonly string[] Headings = {"h1", "h2", "h3", "h4", "h5", "h6"};
         public static readonly string[] Links = {"a", "img"};
         public static readonly string[] Lists = {"ul", "li", "ol", "dl", "dt", "dd"};
+        public static readonly string[] WebPage = {"html", "head", "title", "body"};
         public static readonly string[] References = {"q", "cite", "abbr", "acronym", "del", "ins"};
         public static readonly string[] Semantics = {"time", "mark"};
         public static readonly string[] Structure = {"p", "div", "span", "br", "hr", "label"};
@@ -51,26 +52,6 @@ namespace XssShield.Inspectors
         /// The list to check
         /// </summary>
         public readonly List<string> List;
-
-        /// <summary>
-        /// Removes empty and duplicated entries in the list.
-        /// </summary>
-        /// <param name="pList">The list to clean.</param>
-        /// <returns>A new list.</returns>
-        public static List<string> CleanList(IEnumerable<string> pList)
-        {
-            if (pList == null)
-            {
-                throw new NullReferenceException("pList");
-            }
-
-            return (from item in pList
-                    let str = item.ToLower().Trim()
-                    where str.Length > 0
-                    select str)
-                .Distinct()
-                .ToList();
-        }
 
         /// <summary>
         /// Constructor
@@ -116,7 +97,27 @@ namespace XssShield.Inspectors
                 : new Rejection(!ChildFriendly.Contains(name),
                     pNode,
                     new RiskDiscovery(pNode.Line, pNode.LinePosition,
-                        string.Format("<{0}> is not in white list.", pNode.Name)));
+                        string.Format("WhiteList: <{0}> is not in white list.", pNode.Name)));
+        }
+
+        /// <summary>
+        /// Removes empty and duplicated entries in the list.
+        /// </summary>
+        /// <param name="pList">The list to clean.</param>
+        /// <returns>A new list.</returns>
+        public static List<string> CleanList(IEnumerable<string> pList)
+        {
+            if (pList == null)
+            {
+                throw new NullReferenceException("pList");
+            }
+
+            return (from item in pList
+                    let str = item.ToLower().Trim()
+                    where str.Length > 0
+                    select str)
+                .Distinct()
+                .ToList();
         }
 
         /// <summary>
@@ -125,6 +126,7 @@ namespace XssShield.Inspectors
         public static IEnumerable<string> Html4()
         {
             List<string> all = new List<string>();
+            all.AddRange(WebPage);
             all.AddRange(Structure);
             all.AddRange(Headings);
             all.AddRange(Styles);

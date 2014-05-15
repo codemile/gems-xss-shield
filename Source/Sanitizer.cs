@@ -22,7 +22,9 @@ namespace XssShield
         {
             InspectorCollection inspectors = new InspectorCollection
                                              {
-                                                 new WhiteList(WhiteList.Html5(),WhiteList.ChildFriendlyTags)
+                                                 new WhiteList(WhiteList.Html5(),WhiteList.ChildFriendlyTags),
+                                                 new AttributeWhiteList(AttributeWhiteList.Minimum),
+                                                 new UrlRewriter(UrlRewriter.Basic,false)
                                              };
             return Clean(inspectors, pDocument);
         }

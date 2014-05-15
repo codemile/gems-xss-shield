@@ -1,10 +1,12 @@
-﻿using HtmlAgilityPack;
+﻿using System.Diagnostics;
+using HtmlAgilityPack;
 
 namespace XssShield
 {
     /// <summary>
     /// Represents the discovery of something risky in the HTML.
     /// </summary>
+    [DebuggerDisplay("{Line} {Column}:{Message}")]
     public class RiskDiscovery
     {
         /// <summary>
