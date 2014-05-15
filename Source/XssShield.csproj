@@ -49,10 +49,11 @@
     <Compile Include="Inspectors\iInspector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sanitized.cs" />
-    <Compile Include="Sanitizer.cs" />
-    <Compile Include="HtmlWalker.cs" />
+    <Compile Include="Processing\XssProcessor.cs" />
+    <Compile Include="Processing\HtmlWalker.cs" />
     <Compile Include="Inspectors\Rejection.cs" />
     <Compile Include="Inspectors\InspectorCollection.cs" />
+    <Compile Include="Sanitizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

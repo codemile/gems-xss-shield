@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
 
-namespace XssShield
+namespace XssShield.Processing
 {
     /// <summary>
     /// Handles the work of traversing an HTML node tree.

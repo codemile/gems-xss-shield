@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using HtmlAgilityPack;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using XssShield;
+using XssShield.Processing;
 
-namespace XssShieldTests
+namespace XssShieldTests.Processing
 {
     [TestClass]
     public class HtmlWalkerTests

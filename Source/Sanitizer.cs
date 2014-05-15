@@ -1,118 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Text;
-using HtmlAgilityPack;
 using XssShield.Inspectors;
+using XssShield.Processing;
 
 namespace XssShield
 {
-    public class Sanitizer
+    /// <summary>
+    /// The main factory class for sanitizing HTML.
+    /// </summary>
+    public static class Sanitizer
     {
         /// <summary>
-        /// The encoding used internally.
+        /// Performs sanitization of a HTML document using a default
+        /// set of inspectors where strict XSS safety is required.
         /// </summary>
-        private readonly Encoding _encoding;
-
-        /// <summary>
-        /// Defines a list of HTML tags that are allowed.
-        /// </summary>
-        private readonly iInspector _inspector;
-
-        /// <summary>
-        /// A list of nodes to remove from the DOM.
-        /// </summary>
-        private readonly List<Rejection> _rejections;
-
-        /// <summary>
-        /// Sanitizes the HtmlDocument.
-        /// </summary>
-        /// <param name="pDocument">The document to modify.</param>
-        /// <returns>True if any changes were made, or False if none.</returns>
-        private Sanitized Clean(string pDocument)
+        /// <param name="pDocument">A string containing the HTML.</param>
+        /// <returns>The results.</returns>
+        public static Sanitized Parinoid(string pDocument)
         {
-            _rejections.Clear();
-
-            HtmlWalker walker = new HtmlWalker(pDocument, _encoding);
-            Sanitized result = walker.Execute(Process);
-
-            foreach (Rejection rejected in _rejections)
-            {
-                HtmlNode node = rejected.Node;
-                HtmlNode parent = node.ParentNode;
-
-                // can not remove the root node of the document.
-                if (parent == null)
-                {
-                    continue;
-                }
-
-                if (!rejected.RemoveChildren)
-                {
-                    parent.AppendChildren(node.ChildNodes);
-                    node.ChildNodes.Clear();
-                }
-                parent.RemoveChild(node);
-            }
-
-            using (StringWriter writer = new StringWriter())
-            {
-                walker.Document.Save(writer);
-                result.Document = writer.ToString();
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Called for each node in the document.
-        /// </summary>
-        /// <param name="pResult">Records the result of sanitizing the document.</param>
-        /// <param name="pNode">The node to inspect.</param>
-        /// <returns>True if modified</returns>
-        private void Process(Sanitized pResult, HtmlNode pNode)
-        {
-            switch (pNode.NodeType)
-            {
-                case HtmlNodeType.Text:
-                    pResult.Clean.Append(pNode.InnerText);
-                    break;
-                case HtmlNodeType.Element:
-                    Rejection result = _inspector.Inspect(pNode);
-                    if (result == null)
-                    {
-                        break;
-                    }
-                    if (result.Reason != null)
-                    {
-                        pResult.Add(result.Reason);
-                    }
-                    _rejections.Add(result);
-                    break;
-                default:
-                    _rejections.Add(new Rejection(true, pNode));
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="pInspector">White list provider.</param>
-        /// <param name="pEncoding">The encoding used internally.</param>
-        private Sanitizer(iInspector pInspector, Encoding pEncoding)
-        {
-            _inspector = pInspector;
-            _encoding = pEncoding;
-            _rejections = new List<Rejection>();
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        private Sanitizer(iInspector pInspector)
-            : this(pInspector, Encoding.UTF8)
-        {
+            InspectorCollection inspectors = new InspectorCollection
+                                             {
+                                                 new WhiteList(WhiteList.Html5(),WhiteList.ChildFriendlyTags)
+                                             };
+            return Clean(inspectors, pDocument);
         }
 
         /// <summary>
@@ -132,8 +44,8 @@ namespace XssShield
                 throw new NullReferenceException("pDocument");
             }
 
-            Sanitizer sanitizer = new Sanitizer(pInspector);
-            return sanitizer.Clean(pDocument);
+            XssProcessor xssProcessor = new XssProcessor(pInspector);
+            return xssProcessor.Clean(pDocument);
         }
 
         /// <summary>
