@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Inspectors\AttributeInspector.cs" />
     <Compile Include="Inspectors\AttributeList.cs" />
+    <Compile Include="Inspectors\AttributeCounter.cs" />
     <Compile Include="Inspectors\UrlRewriter.cs" />
     <Compile Include="Inspectors\AttributeWhiteList.cs" />
     <Compile Include="Inspectors\WhiteList.cs" />

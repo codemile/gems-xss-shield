@@ -56,6 +56,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Inspectors\AttributeCounterTests.cs" />
     <Compile Include="Processing\HtmlWalkerTests.cs" />
     <Compile Include="Inspectors\AttributeInspectorTests.cs" />
     <Compile Include="Inspectors\AttributeListTests.cs" />

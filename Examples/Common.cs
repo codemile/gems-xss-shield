@@ -1,4 +1,6 @@
-﻿using Common.Utils;
+﻿using System;
+using Common.Utils;
+using XssShield;
 
 namespace Examples
 {
@@ -16,6 +18,30 @@ namespace Examples
         {
             Resources reader = new Resources(typeof (Common), "Files");
             return reader.ReadAsString(pFileName, true, true);
+        }
+
+        /// <summary>
+        /// Writes the results to the console.
+        /// </summary>
+        public static void WriteResults(Sanitized pSanitized, string pOriginal)
+        {
+            Console.WriteLine(@"*******************************************");
+            Console.WriteLine(@"Clean");
+            Console.WriteLine(@"*******************************************");
+            Console.WriteLine(pSanitized.Clean);
+            Console.WriteLine();
+
+            Console.WriteLine(@"*******************************************");
+            Console.WriteLine(@"HTML");
+            Console.WriteLine(@"*******************************************");
+            Console.WriteLine(pSanitized.Document);
+            Console.WriteLine();
+
+            Console.WriteLine(@"*******************************************");
+            Console.WriteLine(@"Original");
+            Console.WriteLine(@"*******************************************");
+            Console.WriteLine(pOriginal);
+            Console.WriteLine();
         }
     }
 }
