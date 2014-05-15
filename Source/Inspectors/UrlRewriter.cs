@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
 using HtmlAgilityPack;
 
 namespace XssShield.Inspectors
@@ -25,6 +27,11 @@ namespace XssShield.Inspectors
                 };
 
         /// <summary>
+        /// The base path for rewriting relative URLs.
+        /// </summary>
+        private readonly string _relative;
+
+        /// <summary>
         /// Reject URLs that use an IP address.
         /// </summary>
         private readonly bool _allowIPAddresses;
@@ -32,9 +39,10 @@ namespace XssShield.Inspectors
         /// <summary>
         /// Constructor
         /// </summary>
-        public UrlRewriter(AttributeList pWhiteList, bool pAllowIPAddresses)
+        public UrlRewriter(string pRelative, AttributeList pWhiteList, bool pAllowIPAddresses)
             : base(pWhiteList)
         {
+            _relative = pRelative;
             _allowIPAddresses = pAllowIPAddresses;
         }
 
@@ -58,7 +66,7 @@ namespace XssShield.Inspectors
             string name = pNode.Name.ToLower().Trim();
             foreach (string attrName in Attributes[name])
             {
-                string url = CleanURL(pNode.Attributes[attrName].Value, _allowIPAddresses);
+                string url = CleanURL(_relative, pNode.Attributes[attrName].Value, _allowIPAddresses);
                 if (url == null)
                 {
                     return new Rejection(true, pNode, new RiskDiscovery(pNode.Line, pNode.LinePosition, "UrlRewriter: Malformed URL"));
@@ -72,10 +80,11 @@ namespace XssShield.Inspectors
         /// <summary>
         /// Sanitizes and rewrites a URL
         /// </summary>
+        /// <param name="pRelative">The relative URL for paths, or Null to reject relative.</param>
         /// <param name="pUrl">The input URL</param>
         /// <param name="pAllowIP">True to allow IP addresses.</param>
         /// <returns>A new URL, or Null if the input URL was invalid</returns>
-        public static string CleanURL(string pUrl, bool pAllowIP)
+        public static string CleanURL(string pRelative, string pUrl, bool pAllowIP)
         {
             if (pUrl == null)
             {
@@ -84,10 +93,52 @@ namespace XssShield.Inspectors
 
             try
             {
-                Uri uri = new Uri(pUrl);
+                // Assume XSS encoding attack if a "&" character comes before a "?" or "#" character.
+                if (pUrl.IndexOf('&') >= 0 &&
+                    ((pUrl.IndexOf('?') >= 0 && pUrl.IndexOf('?') > pUrl.IndexOf('&'))
+                    || (pUrl.IndexOf('#') >= 0 && pUrl.IndexOf('#') > pUrl.IndexOf('&'))))
+                {
+                    return null;
+                }
+
+                // don't allow "&" by itself
+                if (pUrl.IndexOf('&') >= 0 
+                    && pUrl.IndexOf('?') == -1
+                    && pUrl.IndexOf('#') == -1)
+                {
+                    return null;
+                }
+
+                // remove whitespace from the URL. Some XSS attacks add
+                // whitespace to trick filters.
+                pUrl = Regex.Replace(pUrl, @"\s", "");
+
+                // decode US-ASCII tags
+                pUrl = pUrl.Replace("¼", "<").Replace("¾", ">");
+
+                // see if the decoded version contains any JavaScript
+                string str = HttpUtility.UrlDecode(pUrl,Encoding.UTF8);
+                if (str != null)
+                {
+                    str = Regex.Replace(str.ToLower().Trim(), @"\s", "");
+                    if (str.IndexOf("javascript:", StringComparison.Ordinal) != -1
+                        || str.IndexOf("<script", StringComparison.Ordinal) != -1)
+                    {
+                        return null;
+                    }
+                }
+
+                // by rebuilding the URL most XSS attacks
+                // will be broken apart and rebuilt causing
+                // the attack to fail.
+                Uri uri = pRelative == null
+                    ? new Uri(pUrl, UriKind.Absolute)
+                    : new Uri(new Uri(pRelative), pUrl);
 
                 // only allow HTTP schemes
-                if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
+                if (uri.IsAbsoluteUri
+                    && uri.Scheme != Uri.UriSchemeHttp
+                    && uri.Scheme != Uri.UriSchemeHttps)
                 {
                     return null;
                 }
@@ -110,6 +161,8 @@ namespace XssShield.Inspectors
                 StringBuilder sb = new StringBuilder();
                 sb.Append(uri.Scheme);
                 sb.Append("://");
+
+                // TODO: Validate Host name using DNS restrictions
                 sb.Append(uri.Host.ToLower());
 
                 if (!uri.IsDefaultPort)
@@ -123,7 +176,7 @@ namespace XssShield.Inspectors
                 if (uri.Segments.Length > 0)
                 {
                     string path = string.Join("/",
-                        uri.Segments.Select(pSeg=>pSeg.Replace("/", "")).Where(pSeg=>pSeg != ""));
+                        uri.Segments.Select(pSeg => pSeg.Replace("/", "")).Where(pSeg => pSeg != ""));
                     sb.Append(path);
                 }
 

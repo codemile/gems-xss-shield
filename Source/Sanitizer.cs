@@ -16,15 +16,16 @@ namespace XssShield
         /// Performs sanitization of a HTML document using a default
         /// set of inspectors where strict XSS safety is required.
         /// </summary>
+        /// <param name="pRelative">The base path for URLs</param>
         /// <param name="pDocument">A string containing the HTML.</param>
         /// <returns>The results.</returns>
-        public static Sanitized Parinoid(string pDocument)
+        public static Sanitized Parinoid(string pRelative, string pDocument)
         {
             InspectorCollection inspectors = new InspectorCollection
                                              {
                                                  new WhiteList(WhiteList.Html5(),WhiteList.ChildFriendlyTags),
                                                  new AttributeWhiteList(AttributeWhiteList.Minimum),
-                                                 new UrlRewriter(UrlRewriter.Basic,false)
+                                                 new UrlRewriter(pRelative, UrlRewriter.Basic,false)
                                              };
             return Clean(inspectors, pDocument);
         }

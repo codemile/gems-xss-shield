@@ -16,7 +16,7 @@ namespace Examples
         public void Clean_Html_String()
         {
             string html = Common.getResource("Sample.html");
-            Sanitized sanitized = Sanitizer.Parinoid(html);
+            Sanitized sanitized = Sanitizer.Parinoid("http://www.thinkingmedia.ca", html);
 
             Console.WriteLine(@"*******************************************");
             Console.WriteLine(@"Clean");
