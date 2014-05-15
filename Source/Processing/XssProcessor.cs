@@ -63,8 +63,12 @@ namespace XssShield.Processing
                 result.Document = writer.ToString();
             }
 
+            walker = new HtmlWalker(result.Document,_encoding);
+            Sanitized cleaned = walker.Execute(Scrape);
+
             // remove extra whitespace
-            string clean = result.Clean.ToString();
+            string clean = cleaned.Clean.ToString();
+
             result.Clean.Clear();
             result.Clean.Append(CleanWhiteSpace(clean));
             result.Document = CleanWhiteSpace(result.Document);
@@ -88,6 +92,17 @@ namespace XssShield.Processing
         }
 
         /// <summary>
+        /// Called to extract the text contents after cleaning the HTML.
+        /// </summary>
+        private void Scrape(Sanitized pResult, HtmlNode pNode)
+        {
+            if (pNode.NodeType == HtmlNodeType.Text)
+            {
+                pResult.Clean.Append(pNode.InnerText);
+            }
+        }
+
+        /// <summary>
         /// Called for each node in the document.
         /// </summary>
         /// <param name="pResult">Records the result of sanitizing the document.</param>
@@ -98,7 +113,6 @@ namespace XssShield.Processing
             switch (pNode.NodeType)
             {
                 case HtmlNodeType.Text:
-                    pResult.Clean.Append(pNode.InnerText);
                     break;
                 case HtmlNodeType.Element:
                     Rejection result = _inspector.Inspect(pNode);
