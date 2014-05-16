@@ -43,6 +43,11 @@ namespace XssShield.Inspectors
             : base(pWhiteList)
         {
             _relative = pRelative;
+            if (_relative != null && string.IsNullOrWhiteSpace(_relative))
+            {
+                throw new ArgumentOutOfRangeException("pRelative","Value can not be empty string.");
+            }
+
             _allowIPAddresses = pAllowIPAddresses;
         }
 
