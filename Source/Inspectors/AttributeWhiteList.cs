@@ -33,6 +33,16 @@ namespace XssShield.Inspectors
                     {"colgroup", new List<string> {"span"}}
                 };
 
+        public static readonly
+            AttributeList Videos =
+                new AttributeList
+                {
+                    {"iframe",new List<string>{"width","height","src","frameborder","allowfullscreen"}},
+                    {"object",new List<string>{"width","height"}},
+                    {"param",new List<string>{"name","value"}},
+                    {"embed",new List<string>{"src","type","width","height","allowscriptaccess","allowfullscreen"}},
+                };
+
         /// <summary>
         /// Constructor
         /// </summary>

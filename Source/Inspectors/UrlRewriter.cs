@@ -23,7 +23,9 @@ namespace XssShield.Inspectors
                 {
                     {"a", new List<string> {"href"}},
                     {"img", new List<string> {"src"}},
-                    {"q", new List<string> {"cite"}}
+                    {"q", new List<string> {"cite"}},
+                    {"iframe", new List<string> {"src"}},
+                    {"embed", new List<string> {"src"}}
                 };
 
         /// <summary>
