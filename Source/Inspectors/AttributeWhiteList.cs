@@ -37,10 +37,23 @@ namespace XssShield.Inspectors
             AttributeList Videos =
                 new AttributeList
                 {
-                    {"iframe",new List<string>{"width","height","src","frameborder","allowfullscreen"}},
-                    {"object",new List<string>{"width","height"}},
-                    {"param",new List<string>{"name","value"}},
-                    {"embed",new List<string>{"src","type","width","height","allowscriptaccess","allowfullscreen"}},
+                    {"iframe", new List<string> {"width", "height", "src", "frameborder", "allowfullscreen"}},
+                    {"object", new List<string> {"width", "height"}},
+                    {"param", new List<string> {"name", "value"}},
+                    {
+                        "embed",
+                        new List<string>
+                        {
+                            "src",
+                            "type",
+                            "width",
+                            "height",
+                            "allowscriptaccess",
+                            "allowfullscreen",
+                            "webkitallowfullscreen",
+                            "mozallowfullscreen"
+                        }
+                    },
                 };
 
         /// <summary>
@@ -86,7 +99,7 @@ namespace XssShield.Inspectors
                 .GroupBy(pAttr=>pAttr.Name)
                 .Select(pGroup=>pGroup.First())
                 .ToList();
-            allowedAttr.ForEach(pAttr => pNode.Attributes.Add(pAttr));
+            allowedAttr.ForEach(pAttr=>pNode.Attributes.Add(pAttr));
 
             return pNode;
         }
