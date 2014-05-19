@@ -37,7 +37,7 @@ namespace XssShield.Inspectors
         public static readonly string[] Structure = {"p", "div", "span", "br", "hr", "label"};
         public static readonly string[] Styles = {"font", "strong", "b", "em", "i", "u", "strike", "sub", "sup"};
 
-        public static readonly string[] Videos = {"iframe", "object", "embed"};
+        public static readonly string[] Embedded = {"iframe", "object", "embed", "video", "audio", "source","param","track"};
 
         public static readonly string[] Tables =
         {

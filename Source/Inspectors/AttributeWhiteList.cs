@@ -34,11 +34,11 @@ namespace XssShield.Inspectors
                 };
 
         public static readonly
-            AttributeList Videos =
+            AttributeList Embedded =
                 new AttributeList
                 {
                     {"iframe", new List<string> {"width", "height", "src", "frameborder", "allowfullscreen"}},
-                    {"object", new List<string> {"width", "height"}},
+                    {"object", new List<string> {"width", "height","data","type"}},
                     {"param", new List<string> {"name", "value"}},
                     {
                         "embed",
@@ -54,6 +54,10 @@ namespace XssShield.Inspectors
                             "mozallowfullscreen"
                         }
                     },
+                    {"video",new List<string>{"src","controls","autoplay","loop","type","width","height","muted","poster"}},
+                    {"track",new List<string>{"kind","src","srclang","label"}},
+                    {"source",new List<string>{"src","type","media"}},
+                    {"audio",new List<string>{"src","preload","controls","autoplay","loop","muted","volume"}}
                 };
 
         /// <summary>
